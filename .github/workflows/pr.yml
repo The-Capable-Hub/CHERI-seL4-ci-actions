@@ -14,6 +14,10 @@ on:
         type: string
         required: false
         default: ubuntu-latest
+      container-image:
+        type: string
+        required: false
+        default: ""
     secrets:
       token:
         description: 'Optional token for private repositories'
@@ -24,6 +28,7 @@ jobs:
   gitlint:
     name: Gitlint
     runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     steps:
     - uses: seL4/ci-actions/gitlint@master
       with:
@@ -32,6 +37,7 @@ jobs:
   whitespace:
     name: 'Trailing Whitespace'
     runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     steps:
     - uses: seL4/ci-actions/git-diff-check@master
       with:
@@ -40,6 +46,7 @@ jobs:
   shell:
     name: 'Portable Shell'
     runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     steps:
     - uses: seL4/ci-actions/bashisms@master
       with:
@@ -48,6 +55,7 @@ jobs:
   style:
     name: Style
     runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     steps:
     - uses: seL4/ci-actions/style@master
       with:

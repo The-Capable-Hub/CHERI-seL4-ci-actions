@@ -15,11 +15,16 @@ on:
         type: string
         required: false
         default: ubuntu-latest
+      container-image:
+        type: string
+        required: false
+        default: ""
 
 jobs:
   sim:
     name: Simulation
     runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     strategy:
       matrix:
         march: [armv7a, armv8a, nehalem, rv32imac, rv64imac]

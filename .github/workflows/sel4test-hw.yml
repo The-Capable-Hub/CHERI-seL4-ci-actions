@@ -15,6 +15,10 @@ on:
         type: string
         required: false
         default: ubuntu-latest
+      container-image:
+        type: string
+        required: false
+        default: ""
 
 # intended to run on
 #  pull_request_target:
@@ -29,6 +33,7 @@ jobs:
   code:
     name: Freeze Code
     runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
 # Since we cancel older runs of this workflow for the current PR, we want to
 # restart tests ("contains" clause), even if the event is for adding a different
 # label.
@@ -52,6 +57,7 @@ jobs:
   hw-build:
     name: HW Build
     runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     needs: code
     # To reduce the load (especially on the machine queue) we cancel any older
     # runs of this workflow for the current PR.
@@ -86,6 +92,7 @@ jobs:
     name: Matrix
     needs: hw-build
     runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
@@ -95,6 +102,7 @@ jobs:
   hw-run:
     name: HW Run
     runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     needs: the_matrix
     if: ${{ github.repository_owner == 'seL4' &&
             (github.event_name == 'pull_request_target' &&
