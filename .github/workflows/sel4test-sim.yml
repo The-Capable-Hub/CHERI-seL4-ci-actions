@@ -10,11 +10,16 @@ name: seL4Test-Sim
 
 on:
   workflow_call:
+    inputs:
+      runner:
+        type: string
+        required: false
+        default: ubuntu-latest
 
 jobs:
   sim:
     name: Simulation
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     strategy:
       matrix:
         march: [armv7a, armv8a, nehalem, rv32imac, rv64imac]
