@@ -14,6 +14,10 @@ on:
         required: false
         default: false
         type: boolean
+      runner:
+        type: string
+        required: false
+        default: ubuntu-latest
 
 # intended to run on
 #  pull_request_target:
@@ -26,7 +30,7 @@ permissions:
 jobs:
   code:
     name: Freeze Code
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
 
 # Since we cancel older runs of this workflow for the current PR, we want to
 # restart tests ("contains" clause), even if the event is for adding a different
@@ -49,7 +53,7 @@ jobs:
   build:
     name: Build
     needs: code
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     # To reduce the load on GitHub runner numbers and machine queue we cancel
     # any older runs of this workflow for the current PR.
     concurrency:
@@ -80,7 +84,7 @@ jobs:
               github.event.label.name == 'hw-bench'
             )
         }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     needs: [build]
     concurrency:
       group: ${{ github.workflow }}-sel4bench-hw-run-pr-${{ github.event.number }}-${{ strategy.job-index }}

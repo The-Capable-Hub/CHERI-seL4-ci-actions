@@ -10,6 +10,11 @@ name: seL4Test-HW
 
 on:
   workflow_call:
+    inputs:
+      runner:
+        type: string
+        required: false
+        default: ubuntu-latest
 
 # intended to run on
 #  pull_request_target:
@@ -23,7 +28,7 @@ permissions:
 jobs:
   code:
     name: Freeze Code
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
 # Since we cancel older runs of this workflow for the current PR, we want to
 # restart tests ("contains" clause), even if the event is for adding a different
 # label.
@@ -46,7 +51,7 @@ jobs:
 
   hw-build:
     name: HW Build
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     needs: code
     # To reduce the load (especially on the machine queue) we cancel any older
     # runs of this workflow for the current PR.
@@ -80,7 +85,7 @@ jobs:
   the_matrix:
     name: Matrix
     needs: hw-build
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
@@ -89,7 +94,7 @@ jobs:
 
   hw-run:
     name: HW Run
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     needs: the_matrix
     if: ${{ github.repository_owner == 'seL4' &&
             (github.event_name == 'pull_request_target' &&
