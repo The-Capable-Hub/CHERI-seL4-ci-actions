@@ -33,6 +33,7 @@ case "${INPUT_ARCH}" in
     RISCV64_CHERI)
         gcc_cfg=""
         llvm_triple="riscv64-unknown-elf"
+        INPUT_ARCH="RISCV64"
         ;;
     IA32|X64)
         # just use the standard host compiler
