@@ -33,7 +33,6 @@ case "${INPUT_ARCH}" in
     RISCV64_CHERI)
         gcc_cfg=""
         llvm_triple="riscv64-unknown-elf"
-        INPUT_ARCH="RISCV64"
         ;;
     IA32|X64)
         # just use the standard host compiler
@@ -68,9 +67,18 @@ do_compile_kernel()
     variant=${1:-}
 
     build_folder="build"
-    config_file="configs/${INPUT_ARCH}_verified.cmake"
     variant_info=""
     extra_params=""
+
+    if [ "${INPUT_ARCH}" = "RISCV64_CHERI" ]; then
+        extra_params="${extra_params} -DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
+        # reset INPUT_ARCH to avoid breaking the rest of the build
+        INPUT_ARCH="RISCV64"
+    else
+        :
+    fi
+
+    config_file="configs/${INPUT_ARCH}_verified.cmake"
 
     if [ ! -z "${variant}" ]; then
         case "${variant}" in
