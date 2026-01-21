@@ -21,6 +21,8 @@ runs:
   using: composite
   steps:
     - run: |
+        apt update && apt install -y cmake ninja-build device-tree-compiler python3-yaml pip
+        python3 -m pip install pyfdt --break-system-packages
         echo "PWD: $(pwd)"
         echo "LS:"
         ls
