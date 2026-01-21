@@ -8,6 +8,13 @@
 echo "Arch: $INPUT_ARCH"
 echo "Comp: $INPUT_COMPILER"
 
+echo "==========================================="
+echo "User: $(whoami)"
+echo "PATH=$PATH"
+echo "Clang: $(which clang)"
+echo "CHERI clang: $(/root/llvm-cheri/install/bin/clang --version)"
+echo "==========================================="
+
 set -eu
 
 gcc_cfg=""
