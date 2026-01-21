@@ -21,8 +21,10 @@ runs:
   using: composite
   steps:
     - run: |
-        cd "$GITHUB_ACTION_PATH"
-        ./compile_kernel.sh
+        echo "PWD: $(pwd)"
+        echo "LS:"
+        ls
+        $GITHUB_ACTION_PATH/compile_kernel.sh
       shell: bash
       env:
         INPUT_ARCH: ${{ inputs.ARCH }}
