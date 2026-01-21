@@ -18,5 +18,12 @@ inputs:
     required: true
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: composite
+  steps:
+    - run: |
+        cd "$GITHUB_ACTION_PATH"
+        ./compile_kernel.sh
+      shell: bash
+      env:
+        INPUT_ARCH: ${{ inputs.ARCH }}
+        INPUT_COMPILER: ${{ inputs.COMPILER }}
