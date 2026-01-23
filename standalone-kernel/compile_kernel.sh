@@ -12,7 +12,7 @@ echo "==========================================="
 echo "User: $(whoami)"
 echo "PATH=$PATH"
 echo "Clang: $(which clang)"
-echo "CHERI clang: $(/root/llvm-cheri/install/bin/clang --version)"
+echo "CHERI clang: $(clang --version)"
 echo "==========================================="
 
 set -eu

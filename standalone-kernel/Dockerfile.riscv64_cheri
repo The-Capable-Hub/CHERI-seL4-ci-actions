@@ -1,0 +1,80 @@
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+#FROM trustworthysystems/sel4:latest
+FROM capablehub/tch-ubuntu-24-builder:latest
+
+ARG LLVM_CHERI_PATH=/opt/cheri-tools/llvm-cheri-codasip
+
+USER root
+
+RUN mkdir -p ${LLVM_CHERI_PATH}
+
+COPY --from=capablehub/cheri-ca-llvm:18-riscv64-latest --chown=root:root /root/llvm-cheri/install ${LLVM_CHERI_PATH}
+
+ENV PATH="${LLVM_CHERI_PATH}/bin:${PATH}"
+
+RUN apt update && apt install -y cmake \
+    ninja-build \
+    device-tree-compiler \
+    libxml2-utils \
+    pip
+
+RUN python3 -m pip config set global.break-system-packages true
+
+RUN python3 -m pip install \
+    MarkupSafe \
+    PyYAML \
+    arrow \
+    astroid \
+    attrs \
+    autopep8 \
+    beautifulsoup4 \
+    binaryornot \
+    boolean-py \
+    bs4 \
+    chardet \
+    charset-normalizer \
+    click \
+    cmake-format \
+    devscripts \
+    dill \
+    future \
+    gitlint \
+    gitlint-core \
+    guardonce \
+    isort \
+    jinja2 \
+    jsonschema \
+    jsonschema-specifications \
+    libarchive-c \
+    license-expression \
+    lxml \
+    mccabe \
+    nose \
+    pexpect \
+    pip \
+    platformdirs \
+    ply \
+    protobuf \
+    psutil \
+    ptyprocess \
+    pycodestyle \
+    pyelftools \
+    pyfdt \
+    pylint \
+    referencing \
+    reuse \
+    rpds-py \
+    sel4-deps \
+    sh \
+    soupsieve \
+    tomli \
+    tomlkit \
+    typing-extensions
+
+
+COPY compile_kernel.sh /compile_kernel.sh
+
+ENTRYPOINT ["/compile_kernel.sh"]
