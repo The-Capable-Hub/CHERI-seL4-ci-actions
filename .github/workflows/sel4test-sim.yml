@@ -36,6 +36,12 @@ jobs:
       group: ${{ github.workflow }}-sel4sim-pr-${{ github.event.number }}-${{ strategy.job-index }}
       cancel-in-progress: true
     steps:
+    - shell: bash
+      run: |
+        pip3 install protobuf --upgrade --user
+        pip3 install grpcio-tools --upgrade --user
+
+
     - uses: seL4/ci-actions/sel4test-sim@master
       with:
         march: ${{ matrix.march }}
