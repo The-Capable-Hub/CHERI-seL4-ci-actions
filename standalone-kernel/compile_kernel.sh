@@ -8,13 +8,6 @@
 echo "Arch: $INPUT_ARCH"
 echo "Comp: $INPUT_COMPILER"
 
-echo "==========================================="
-echo "User: $(whoami)"
-echo "PATH=$PATH"
-echo "Clang: $(which clang)"
-echo "CHERI clang: $(clang --version)"
-echo "==========================================="
-
 set -eu
 
 gcc_cfg=""
@@ -78,11 +71,10 @@ do_compile_kernel()
     extra_params=""
 
     if [ "${INPUT_ARCH}" = "RISCV64_CHERI" ]; then
+        # Set additional build flags to run a CHERI build
         extra_params="${extra_params} -DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
         # reset INPUT_ARCH to avoid breaking the rest of the build
         INPUT_ARCH="RISCV64"
-    else
-        :
     fi
 
     config_file="configs/${INPUT_ARCH}_verified.cmake"
