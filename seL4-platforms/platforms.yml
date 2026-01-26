@@ -64,6 +64,15 @@ platforms:
     no_hw_test: true
     no_hw_build: true
 
+  RISCVVIRT64_CHERI:
+    arch: riscv
+    modes: [64]
+    platform: qemu-riscv-virt
+    has_simulation: true
+    march: rv64imac_zcherihybrid
+    no_hw_test: true
+    no_hw_build: true
+
   RISCVVIRT32:
     arch: riscv
     modes: [32]
