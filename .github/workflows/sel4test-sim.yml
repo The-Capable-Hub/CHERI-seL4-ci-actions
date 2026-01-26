@@ -38,6 +38,7 @@ jobs:
     steps:
     - shell: bash
       run: |
+        python3 -m pip config set global.break-system-packages true
         pip3 install protobuf --upgrade --user
         pip3 install grpcio-tools --upgrade --user
         pip3 install nanopb --upgrade --user
