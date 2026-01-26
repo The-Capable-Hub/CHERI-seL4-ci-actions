@@ -41,8 +41,7 @@ jobs:
         pip3 install protobuf --upgrade --user
         pip3 install grpcio-tools --upgrade --user
 
-
-    - uses: seL4/ci-actions/sel4test-sim@master
+    - uses: The-Capable-Hub/CHERI-seL4-ci-actions/sel4test-sim@michaelcobb/capable-hub-ci
       with:
         march: ${{ matrix.march }}
         compiler: ${{ matrix.compiler }}
