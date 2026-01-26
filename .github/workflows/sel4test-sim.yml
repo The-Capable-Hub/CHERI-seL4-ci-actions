@@ -31,7 +31,7 @@ jobs:
         compiler: [gcc, clang]
         include:
           - march: rv64imac_zcherihybrid
-            compiler: llvm
+            compiler: clang
     concurrency:
       group: ${{ github.workflow }}-sel4sim-pr-${{ github.event.number }}-${{ strategy.job-index }}
       cancel-in-progress: true
