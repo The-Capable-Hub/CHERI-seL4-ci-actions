@@ -36,4 +36,4 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://sel4/sel4test-sim:latest'
+  image: 'docker://michaelcobbthecapablehub/sel4test-sim-riscv64-cheri:latest'
