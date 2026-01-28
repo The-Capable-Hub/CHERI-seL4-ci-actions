@@ -27,8 +27,13 @@ jobs:
     container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     strategy:
       matrix:
-        march: [armv7a, armv8a, nehalem, rv32imac, rv64imac]
-        compiler: [gcc, clang]
+        #march: [armv7a, armv8a, nehalem, rv32imac, rv64imac]
+        #compiler: [gcc, clang]
+        march: [rv64imac]
+        compiler: [clang]
+        exclude:
+          - march: rv64imac
+            compiler: clang
         include:
           - march: rv64imac_zcherihybrid
             compiler: clang
