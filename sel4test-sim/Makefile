@@ -5,9 +5,10 @@
 default: build
 
 IMG=sel4/sel4test-sim:latest
+DOCKERFILE=Dockerfile
 
 build:
-	docker build -t $(IMG) -f Dockerfile ..
+	docker build -t $(IMG) -f $(DOCKERFILE) ..
 
 push: build
 	docker push $(IMG)
