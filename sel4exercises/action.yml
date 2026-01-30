@@ -29,10 +29,15 @@ runs:
     - name:
       shell: bash
       run: |
+        cd ${GITHUB_WORKSPACE}
         pwd
         ls -la
 
-        cd ${GITHUB_WORKSPACE}
+        cd ${GITHUB_WORKSPACE}/exercises
+        pwd
+        ls -la
+
+        cd ${GITHUB_WORKSPACE}/repo
         pwd
         ls -la
         exit 1
