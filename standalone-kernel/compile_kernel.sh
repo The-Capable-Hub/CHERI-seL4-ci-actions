@@ -12,6 +12,7 @@ set -eu
 
 gcc_cfg=""
 llvm_triple=""
+extra_params=""
 case "${INPUT_ARCH}" in
     ARM|ARM_HYP)
         gcc_cfg="AARCH32"
@@ -30,9 +31,14 @@ case "${INPUT_ARCH}" in
         gcc_cfg="RISCV64"
         llvm_triple="riscv64-unknown-elf"
         ;;
-    RISCV64_CHERI)
+    RISCV64_PURECAP)
         gcc_cfg=""
         llvm_triple="riscv64-unknown-elf"
+        # Set additional build flags to run a CHERI build
+        extra_params="${extra_params} -DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
+
+        # reset INPUT_ARCH to avoid breaking the rest of the build
+        INPUT_ARCH="RISCV64"
         ;;
     IA32|X64)
         # just use the standard host compiler
@@ -68,14 +74,13 @@ do_compile_kernel()
 
     build_folder="build"
     variant_info=""
-    extra_params=""
 
-    if [ "${INPUT_ARCH}" = "RISCV64_CHERI" ]; then
-        # Set additional build flags to run a CHERI build
-        extra_params="${extra_params} -DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
-        # reset INPUT_ARCH to avoid breaking the rest of the build
-        INPUT_ARCH="RISCV64"
-    fi
+    #if [ "${INPUT_ARCH}" = "RISCV64_PURECAP" ]; then
+    #    # Set additional build flags to run a CHERI build
+    #    extra_params="${extra_params} -DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
+    #    # reset INPUT_ARCH to avoid breaking the rest of the build
+    #    INPUT_ARCH="RISCV64"
+    #fi
 
     config_file="configs/${INPUT_ARCH}_verified.cmake"
 

@@ -23,7 +23,9 @@ runs:
     - name: Build Docker image
       shell: bash
       run: |
-        if [ "${{ matrix.arch }}" = "RISCV64_CHERI" ] ; then
+        echo "DOCKERFILE: ${{ matrix.dockerfile }}" && exit 1
+
+        if [ "${{ matrix.arch }}" = "RISCV64_PURECAP" ] ; then
           DOCKERFILE="Dockerfile.riscv64_cheri"
         else
           DOCKERFILE="Dockerfile"
