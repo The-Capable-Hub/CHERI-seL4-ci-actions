@@ -20,7 +20,7 @@ jobs:
   sim:
     name: Exercises
     runs-on: ${{ inputs.runner }}
-    container: ${{ matrix.container-image }}
+    container: ${{ matrix.container-image || inputs.container-image }}
     strategy:
       matrix:
         arch: [RISCV64]

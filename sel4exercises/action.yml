@@ -45,5 +45,7 @@ runs:
         which clang
 
         echo "========================================================"
-        cd ${GITHUB_WORKSPACE}/repo
+        cd ${GITHUB_WORKSPACE}/../
+        pwd
+        ls -la
         
