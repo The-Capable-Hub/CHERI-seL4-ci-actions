@@ -27,25 +27,29 @@ runs:
   using: 'composite'
   steps:
     - name: Build seL4 microkit
+      env:
+        INPUT_ARCH: ${{ inputs.ARCH }}
+        INPUT_COMPILER: ${{ inputs.COMPILER }}
       shell: bash
       run: |
+        echo "INPUT_ARCH=${INPUT_ARCH}"
+        echo "INPUT_COMPILER=${INPUT_COMPILER}"
+        echo "========================================================"
+        echo "Clang in path: $(which clang)"
+        echo "========================================================"
+
         cd ${GITHUB_WORKSPACE}
         pwd
         ls -la
         echo "========================================================"
 
-        #cd ${GITHUB_WORKSPACE}/exercises
-        #pwd
-        #ls -la
-
-        #cd ${GITHUB_WORKSPACE}/repo
-        #pwd
-        #ls -la
-        echo "========================================================"
-        which clang
-
-        echo "========================================================"
-        cd ${GITHUB_WORKSPACE}/../
+        cd ${GITHUB_ACTION_PATH}
         pwd
         ls -la
+        echo "========================================================"
         
+        # Compile seL4
+        cd ${GITHUB_WORKSPACE}/repo
+        ${GITHUB_ACTION_PATH}/compile_kernel.sh
+
+

@@ -24,11 +24,10 @@ jobs:
     strategy:
       matrix:
         arch: [RISCV64]
-        compiler: [clang]
-        container-image: [ null ]
+        compiler: [llvm]
         include:
           - arch: RISCV64_PURECAP
-            compiler: clang
+            compiler: llvm
             container-image: michaelcobbthecapablehub/sel4-riscv-cheri:latest
     concurrency:
       group: ${{ github.workflow }}-sel4exercises-pr-${{ github.event.number }}-${{ strategy.job-index }}
