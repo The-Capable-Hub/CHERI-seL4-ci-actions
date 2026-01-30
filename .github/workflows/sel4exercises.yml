@@ -34,7 +34,7 @@ jobs:
     steps:
     - uses: actions/checkout@v5
       with:
-        respository: "CHERI-Alliance/CHERI-seL4-Exercises"
+        repository: "CHERI-Alliance/CHERI-seL4-Exercises"
         ref: "sel4-microkit"
     - uses: The-Capable-Hub/CHERI-seL4-ci-actions/sel4exercises@michaelcobb/capable-hub-ci
       with:
