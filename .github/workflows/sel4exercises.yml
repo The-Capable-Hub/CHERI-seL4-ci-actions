@@ -32,10 +32,10 @@ jobs:
       group: ${{ github.workflow }}-sel4exercises-pr-${{ github.event.number }}-${{ strategy.job-index }}
       cancel-in-progress: true
     steps:
-    - uses: actions/checkout@v5
-      with:
-        repository: "CHERI-Alliance/CHERI-seL4-Exercises"
-        ref: "sel4-microkit"
+    #- uses: actions/checkout@v5
+    #  with:
+    #    repository: "CHERI-Alliance/CHERI-seL4-Exercises"
+    #    ref: "sel4-microkit"
     - uses: The-Capable-Hub/CHERI-seL4-ci-actions/sel4exercises@michaelcobb/capable-hub-ci
       with:
         arch: ${{ matrix.arch }}
