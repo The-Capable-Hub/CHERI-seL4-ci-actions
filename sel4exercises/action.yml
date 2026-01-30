@@ -1,0 +1,34 @@
+name: 'seL4/Exercises'
+description: |
+  Runs sel4 exercises
+#author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  arch:
+    description: Comma separated list of architectures to filter test configs on.
+    required: false
+  compiler:
+    description: One of `{gcc, clang}` to filter test configs on.
+    required: false
+  xml:
+    description: sel4test xml manifest to test
+    required: false
+  debug:
+    description: |
+      Comma separated list of debug levels from `{debug, release, verification}`
+      to filter test configs on. required: false
+    required: false
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'sel4test-sim'
+
+runs:
+  using: 'composite'
+  steps:
+    - name:
+      shell: bash
+      run: |
+        pwd
+        ls -la
+        exit 1

@@ -1,0 +1,43 @@
+# sel4exercises runs
+#
+# See sel4test-sim/builds.yml in the repo seL4/ci-actions for configs.
+
+name: seL4Exercises
+
+on:
+  workflow_call:
+    inputs:
+      runner:
+        type: string
+        required: false
+        default: ubuntu-latest
+      container-image:
+        type: string
+        required: false
+        default: ""
+
+jobs:
+  sim:
+    name: Exercises
+    runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
+    strategy:
+      matrix:
+        arch: [RISCV64]
+        compiler: [clang]
+        include:
+          - arch: RISCV64_PURECAP
+            compiler: clang
+    concurrency:
+      group: ${{ github.workflow }}-sel4exercises-pr-${{ github.event.number }}-${{ strategy.job-index }}
+      cancel-in-progress: true
+    steps:
+    - uses: actions/checkout@v5
+      with:
+        respository: "CHERI-Alliance/CHERI-seL4-Exercises"
+        ref: "sel4-microkit"
+    - uses: The-Capable-Hub/CHERI-seL4-ci-actions/sel4exercises@michaelcobb/capable-hub-ci
+      with:
+        arch: ${{ matrix.arch }}
+        compiler: ${{ matrix.compiler }}
+
