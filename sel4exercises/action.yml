@@ -31,4 +31,8 @@ runs:
       run: |
         pwd
         ls -la
+
+        cd ${GITHUB_WORKSPACE}
+        pwd
+        ls -la
         exit 1
