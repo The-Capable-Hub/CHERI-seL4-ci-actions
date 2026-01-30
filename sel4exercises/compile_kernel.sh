@@ -1,0 +1,144 @@
+#!/bin/bash
+#
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+
+echo "Arch: $INPUT_ARCH"
+echo "Comp: $INPUT_COMPILER"
+
+set -eu
+
+gcc_cfg=""
+llvm_triple=""
+extra_params=""
+case "${INPUT_ARCH}" in
+    ARM|ARM_HYP)
+        gcc_cfg="AARCH32"
+        llvm_triple="arm-linux-gnueabi"
+        ;;
+    AARCH64)
+        gcc_cfg="AARCH64"
+        llvm_triple="aarch64-linux-gnu"
+        ;;
+    RISCV32)
+        gcc_cfg="RISCV32"
+        # the 64-bit toolchain can build for 32-bit also.
+        llvm_triple="riscv64-unknown-elf"
+        ;;
+    RISCV64)
+        gcc_cfg="RISCV64"
+        llvm_triple="riscv64-unknown-elf"
+        ;;
+    RISCV64_PURECAP)
+        gcc_cfg=""
+        llvm_triple="riscv64-unknown-elf"
+        # Set additional build flags to run a CHERI build
+        extra_params="${extra_params} -DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
+
+        # reset INPUT_ARCH to avoid breaking the rest of the build
+        INPUT_ARCH="RISCV64"
+        ;;
+    IA32|X64)
+        # just use the standard host compiler
+        ;;
+    *)
+        echo "Unknown ARCH '${INPUT_ARCH}'"
+        exit 1
+        ;;
+esac
+
+toolchain_flags=""
+case "${INPUT_COMPILER}" in
+    gcc)
+        if [ ! -z "${gcc_cfg}" ]; then
+            toolchain_flags="-D${gcc_cfg}=TRUE"
+        fi
+        ;;
+    llvm)
+        if [ ! -z "${llvm_triple}" ]; then
+            toolchain_flags="-DTRIPLE=${llvm_triple}"
+        fi
+        ;;
+    *)
+        echo "Unknown COMPILER '${INPUT_COMPILER}'"
+        exit 1
+        ;;
+esac
+toolchain_flags="-DCMAKE_TOOLCHAIN_FILE=${INPUT_COMPILER}.cmake ${toolchain_flags}"
+
+do_compile_kernel()
+{
+    variant=${1:-}
+
+    build_folder="build"
+    variant_info=""
+
+    #if [ "${INPUT_ARCH}" = "RISCV64_PURECAP" ]; then
+    #    # Set additional build flags to run a CHERI build
+    #    extra_params="${extra_params} -DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
+    #    # reset INPUT_ARCH to avoid breaking the rest of the build
+    #    INPUT_ARCH="RISCV64"
+    #fi
+
+    config_file="configs/${INPUT_ARCH}_verified.cmake"
+
+    if [ ! -z "${variant}" ]; then
+        case "${variant}" in
+            MCS)
+                build_folder="${build_folder}-${variant}"
+                variant_info=" (${variant})"
+                # Use a dedicated config file if available, otherwise just use
+                # the default config and enable MCS.
+                try_config_file="configs/${INPUT_ARCH}_MCS_verified.cmake"
+                if [ -f "${try_config_file}" ]; then
+                    config_file=${try_config_file}
+                else
+                    extra_params="${extra_params} -DKernelIsMCS=TRUE"
+                fi
+                ;;
+            *)
+                echo "Unknown variant '${variant}'"
+                exit 1
+                ;;
+        esac
+    fi
+
+    # Unfortunately, CMake does not halt with a nice and clear error if the
+    # config file does not exist. Instead, it logs an error that it could not
+    # process the file and continues as if the file was empty. This causes some
+    # rather odd errors then, so it's better to fail here with a clear message.
+    if [ ! -f "${config_file}" ]; then
+        echo "missing config file '${config_file}'"
+        exit 1
+    fi
+
+    echo "::group::Run cmake${variant_info}"
+    ( # run in sub shell
+        set -x
+        cmake -G Ninja -B ${build_folder} \
+              -DCMAKE_INSTALL_PREFIX="${build_folder}/install" \
+              -C ${config_file} ${toolchain_flags} ${extra_params}
+    )
+    echo "::endgroup::"
+
+    echo "::group::Run${variant_info}: ninja"
+    ( # run in sub shell
+        set -x
+        ninja -C ${build_folder} kernel.elf
+    )
+    echo "::endgroup::"
+
+    echo "::group::Run${variant_info}: ninja install"
+    ( # run in sub shell
+        set -x
+        ninja -C ${build_folder} install
+    )
+    echo "::endgroup::"
+}
+
+# build standard kernel
+do_compile_kernel
+# build MCS kernel
+do_compile_kernel "MCS"

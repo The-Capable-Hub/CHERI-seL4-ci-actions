@@ -26,18 +26,24 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name:
+    - name: Build seL4 microkit
       shell: bash
       run: |
         cd ${GITHUB_WORKSPACE}
         pwd
         ls -la
+        echo "========================================================"
 
-        cd ${GITHUB_WORKSPACE}/exercises
-        pwd
-        ls -la
+        #cd ${GITHUB_WORKSPACE}/exercises
+        #pwd
+        #ls -la
 
+        #cd ${GITHUB_WORKSPACE}/repo
+        #pwd
+        #ls -la
+        echo "========================================================"
+        which clang
+
+        echo "========================================================"
         cd ${GITHUB_WORKSPACE}/repo
-        pwd
-        ls -la
-        exit 1
+        

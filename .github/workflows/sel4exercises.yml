@@ -20,14 +20,16 @@ jobs:
   sim:
     name: Exercises
     runs-on: ${{ inputs.runner }}
-    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
+    container: ${{ matrix.container-image }}
     strategy:
       matrix:
         arch: [RISCV64]
         compiler: [clang]
+        container-image: [ null ]
         include:
           - arch: RISCV64_PURECAP
             compiler: clang
+            container-image: michaelcobbthecapablehub/sel4-riscv-cheri:latest
     concurrency:
       group: ${{ github.workflow }}-sel4exercises-pr-${{ github.event.number }}-${{ strategy.job-index }}
       cancel-in-progress: true
