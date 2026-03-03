@@ -17,13 +17,16 @@ inputs:
     description: 'Which compiler suite to use. One of gcc, llvm'
     required: true
 
+  DOCKER_BASE_IMG:
+    required: true
+
 runs:
   using: 'composite'
   steps:
     - name: Build Docker image
       shell: bash
       run: |
-        ( cd $GITHUB_ACTION_PATH/ && docker build -t compile-kernel -f Dockerfile . )
+        ( cd $GITHUB_ACTION_PATH/ && docker build -t compile-kernel -f Dockerfile --build-arg BASE_IMG=${{ inputs.DOCKER_BASE_IMG }} . )
     - name: Run build
       shell: bash
       env:
