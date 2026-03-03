@@ -24,6 +24,12 @@ builds:
     platform: RISCVVIRT64
     l4v_arch: RISCV64
 
+- RISCV64-RVY:
+    platform: RISCVVIRT64_RVY
+    l4v_arch: RISCV64
+    settings:
+      KernelRiscvExtY: "TRUE"
+
 - AARCH32-SABRE:
     platform: SABRE
     l4v_arch: ARM
