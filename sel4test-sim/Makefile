@@ -2,12 +2,16 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
+# To build the RISCV64-CHERI sel4test-sim Docker image:
+# $ make IMG=cheri-sel4-ci-riscv-sel4test-sim:latest BASE_IMG=capablehub/cheri-sel4-ci-riscv-base:latest
+
 default: build
 
+BASE_IMG=trustworthysystems/sel4:latest
 IMG=sel4/sel4test-sim:latest
 
 build:
-	docker build -t $(IMG) -f Dockerfile ..
+	docker build -t $(IMG) -f Dockerfile --build-arg BASE_IMG=$(BASE_IMG) ..
 
 push: build
 	docker push $(IMG)

@@ -4,11 +4,12 @@
 
 # The context of this Dockerfiles is the repo root (../)
 
+ARG BASE_IMG=trustworthysystems/sel4:latest
 ARG WORKSPACE=/workspace
 ARG SCRIPTS=/ci-scripts
 ARG ACTION=sel4test-sim
 
-FROM trustworthysystems/sel4:latest
+FROM $BASE_IMG
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
