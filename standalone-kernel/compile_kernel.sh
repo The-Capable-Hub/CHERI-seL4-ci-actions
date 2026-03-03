@@ -12,6 +12,7 @@ set -eu
 
 gcc_cfg=""
 llvm_triple=""
+extra_arch_params=""
 case "${INPUT_ARCH}" in
     ARM|ARM_HYP)
         gcc_cfg="AARCH32"
@@ -29,6 +30,15 @@ case "${INPUT_ARCH}" in
     RISCV64)
         gcc_cfg="RISCV64"
         llvm_triple="riscv64-unknown-elf"
+        ;;
+    RISCV64_CHERI)
+        gcc_cfg=""
+        llvm_triple="riscv64-unknown-elf"
+        # Set additional build flags to run a CHERI build
+        extra_arch_params="-DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
+
+        # reset INPUT_ARCH to avoid breaking the rest of the build
+        INPUT_ARCH="RISCV64"
         ;;
     IA32|X64)
         # just use the standard host compiler
@@ -87,6 +97,8 @@ do_compile_kernel()
                 ;;
         esac
     fi
+
+    extra_params="${extra_params} ${extra_arch_params}"
 
     # Unfortunately, CMake does not halt with a nice and clear error if the
     # config file does not exist. Instead, it logs an error that it could not
