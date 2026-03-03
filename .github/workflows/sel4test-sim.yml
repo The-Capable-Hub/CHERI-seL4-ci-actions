@@ -15,20 +15,22 @@ on:
         type: string
         required: false
         default: ubuntu-latest
-      container-image:
-        type: string
-        required: false
-        default: ""
 
 jobs:
   sim:
     name: Simulation
     runs-on: ${{ inputs.runner }}
-    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
+    container:
+      image: ${{ matrix.docker_image || 'sel4/sel4test-sim:latest' }}
     strategy:
+      fail-fast: false
       matrix:
         march: [armv7a, armv8a, nehalem, rv32imac, rv64imac]
         compiler: [gcc, clang]
+        #include:
+        #  - march: rv64imac_zcherihybrid
+        #    compiler: clang
+        #    docker_image: "capablehub/cheri-sel4-ci-riscv-sel4test-sim:latest"
     concurrency:
       group: ${{ github.workflow }}-sel4sim-pr-${{ github.event.number }}-${{ strategy.job-index }}
       cancel-in-progress: true
@@ -37,3 +39,4 @@ jobs:
       with:
         march: ${{ matrix.march }}
         compiler: ${{ matrix.compiler }}
+        docker_image: ${{ matrix.docker_image || 'sel4/sel4test-sim:latest' }}

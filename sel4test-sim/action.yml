@@ -29,11 +29,27 @@ inputs:
       Comma separated list of debug levels from `{debug, release, verification}`
       to filter test configs on. required: false
     required: false
+  docker_image:
+    required: true
+
   action_name:
     description: 'internal -- do not use'
     required: false
     default: 'sel4test-sim'
 
 runs:
-  using: 'docker'
-  image: 'docker://sel4/sel4test-sim:latest'
+  using: 'composite'
+  steps:
+    - name: "Run steps.sh"
+      shell: bash
+      env:
+        INPUT_ARCH: ${{ inputs.arch }}
+        INPUT_MARCH: ${{ inputs.march }}
+        INPUT_MODE: ${{ inputs.mode }}
+        INPUT_COMPILER: ${{ inputs.compiler }}
+        INPUT_XML: ${{ inputs.xml }}
+        INPUT_DEBUG: ${{ inputs.debug }}
+        INPUT_ACTION_NAME: ${{ inputs.action_name }}
+        INPUT_REF: ${{ inputs.ref }}
+      run: |
+        steps.sh

@@ -10,6 +10,8 @@
 
 if [ -z "${INPUT_XML}" ]
 then
+  echo "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
+  echo "GITHUB_EVENT_NAME: ${GITHUB_EVENT_NAME}"
   cd $(repo-util path ${GITHUB_REPOSITORY})
   fetch-branch.sh
   cd - >/dev/null
