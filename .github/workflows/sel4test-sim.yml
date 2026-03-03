@@ -33,7 +33,7 @@ jobs:
       group: ${{ github.workflow }}-sel4sim-pr-${{ github.event.number }}-${{ strategy.job-index }}
       cancel-in-progress: true
     steps:
-    - uses: seL4/ci-actions/sel4test-sim@master
+    - uses: The-Capable-Hub/CHERI-seL4-ci-actions/sel4test-sim@michaelcobb/capable-hub-ci
       with:
         march: ${{ matrix.march }}
         compiler: ${{ matrix.compiler }}
