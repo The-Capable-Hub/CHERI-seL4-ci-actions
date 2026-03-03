@@ -17,6 +17,11 @@ inputs:
     description: 'Which compiler suite to use. One of gcc, llvm'
     required: true
 
+  ARCH_EXT:
+    description: "Extensions to enable for the test architecture (space separated list)"
+    required: false
+    default: ""
+
   DOCKER_BASE_IMG:
     required: true
 
@@ -32,6 +37,7 @@ runs:
       env:
         INPUT_ARCH: ${{ inputs.ARCH }}
         INPUT_COMPILER: ${{ inputs.COMPILER }}
+        INPUT_ARCH_EXT: ${{ inputs.ARCH_EXT }}
       run: |
         docker run --rm -e INPUT_ARCH -e INPUT_COMPILER -v $GITHUB_WORKSPACE:/workspace -w /workspace compile-kernel
 

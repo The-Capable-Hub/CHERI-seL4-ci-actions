@@ -7,6 +7,7 @@
 
 echo "Arch: $INPUT_ARCH"
 echo "Comp: $INPUT_COMPILER"
+echo "Arch Ext: $INPUT_ARCH_EXT"
 
 set -eu
 
@@ -30,15 +31,17 @@ case "${INPUT_ARCH}" in
     RISCV64)
         gcc_cfg="RISCV64"
         llvm_triple="riscv64-unknown-elf"
-        ;;
-    RISCV64_CHERI)
-        gcc_cfg=""
-        llvm_triple="riscv64-unknown-elf"
-        # Set additional build flags to run a CHERI build
-        extra_arch_params="-DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
-
-        # reset INPUT_ARCH to avoid breaking the rest of the build
-        INPUT_ARCH="RISCV64"
+        for ext in ${INPUT_ARCH_EXT}; do
+            case "${ext}" in
+                RVY)
+                    extra_arch_params="-DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
+                    ;;
+                *)
+                    echo "RISCV64: Unknown ARCH_EXT '${ext}'"
+                    exit 1
+                    ;;
+            esac
+        done
         ;;
     IA32|X64)
         # just use the standard host compiler
