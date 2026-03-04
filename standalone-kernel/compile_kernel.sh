@@ -7,7 +7,7 @@
 
 echo "Arch: $INPUT_ARCH"
 echo "Comp: $INPUT_COMPILER"
-echo "Arch Ext: $INPUT_ARCH_EXT"
+echo "Arch Ext: ${INPUT_ARCH_EXT-}"
 
 set -eu
 
@@ -31,7 +31,7 @@ case "${INPUT_ARCH}" in
     RISCV64)
         gcc_cfg="RISCV64"
         llvm_triple="riscv64-unknown-elf"
-        for ext in ${INPUT_ARCH_EXT}; do
+        for ext in ${INPUT_ARCH_EXT-}; do
             case "${ext}" in
                 RVY)
                     extra_arch_params="-DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
