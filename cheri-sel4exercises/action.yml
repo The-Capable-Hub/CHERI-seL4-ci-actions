@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-name: 'seL4/Exercises'
+name: 'seL4/CHERIExercises'
 description: |
-  Runs sel4 exercises
+  Runs CHERI seL4 exercises
 
 inputs:
   ARCH:
@@ -34,7 +34,7 @@ runs:
         cd ${GITHUB_ACTION_PATH}
         ./build_microkit_sdk.sh
 
-    - name: Build seL4 Exercises
+    - name: Build CHERI seL4 Exercises
       env:
         INPUT_ARCH: ${{ inputs.ARCH }}
         INPUT_COMPILER: ${{ inputs.COMPILER }}
@@ -43,11 +43,11 @@ runs:
         SEL4_EXERCISES_DIR: "${{ github.workspace }}/exercises"
       shell: bash
       run: |
-        # Build seL4 exercises
+        # Build CHERI seL4 exercises
         cd ${GITHUB_ACTION_PATH}
         ./build_exercises.sh
 
-    - name: Run seL4 exercises
+    - name: Run CHERI seL4 exercises
       env:
         INPUT_ARCH: ${{ inputs.ARCH }}
         INPUT_COMPILER: ${{ inputs.COMPILER }}
@@ -56,6 +56,6 @@ runs:
         SEL4_EXERCISES_DIR: "${{ github.workspace }}/exercises"
       shell: bash
       run: |
-        # Run seL4 exercises
+        # Run CHERI seL4 exercises
         cd ${GITHUB_ACTION_PATH}
         ./run_exercises.sh

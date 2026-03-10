@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-# sel4exercises runs
+# cheri-sel4exercises runs
 
-name: seL4Exercises
+name: CHERI-seL4Exercises
 
 on:
   workflow_call:
@@ -19,8 +19,8 @@ on:
         default: ""
 
 jobs:
-  exercises:
-    name: Exercises
+  cheri-exercises:
+    name: CHERI Exercises
     runs-on: ${{ inputs.runner }}
     container: ${{ matrix.container-image || inputs.container-image }}
     strategy:
@@ -30,7 +30,7 @@ jobs:
             compiler: llvm
             container-image: capablehub/cheri-sel4-ci-riscv-microkit:latest
     concurrency:
-      group: ${{ github.workflow }}-sel4exercises-pr-${{ github.event.number }}-${{ strategy.job-index }}
+      group: ${{ github.workflow }}-cheri-sel4exercises-pr-${{ github.event.number }}-${{ strategy.job-index }}
       cancel-in-progress: true
     steps:
     - name: Act Workaround # https://github.com/nektos/act/issues/973
@@ -51,7 +51,7 @@ jobs:
         repository: "CHERI-Alliance/CHERI-Microkit"
         ref: "cheri"
         path: "microkit"
-    - uses: The-Capable-Hub/CHERI-seL4-ci-actions/sel4exercises@michaelcobb/capable-hub-ci
+    - uses: The-Capable-Hub/CHERI-seL4-ci-actions/cheri-sel4exercises@michaelcobb/capable-hub-ci
       with:
         ARCH: ${{ matrix.arch }}
         COMPILER: ${{ matrix.compiler }}
