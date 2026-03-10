@@ -31,11 +31,17 @@ set_target_from_arch() {
             TARGET="riscv64"
             BOARD="qemu_virt_riscv64"
             TARGET_IS_PURECAP=false
-            ;;
-        RISCV64_CHERI)
-            TARGET="riscv64-purecap"
-            BOARD="qemu_virt_riscv64"
-            TARGET_IS_PURECAP=true
+            for ext in ${INPUT_ARCH_EXT-}; do
+                case "${ext}" in
+                    RVY)
+                        TARGET_IS_PURECAP=true
+                        ;;
+                    *)
+                        echo "RISCV64: Unknown ARCH_EXT '${ext}'"
+                        exit 1
+                        ;;
+                esac
+            done
             ;;
         *)
             echo "INPUT_ARCH: ${INPUT_ARCH}: Unrecognised target" && exit 1
