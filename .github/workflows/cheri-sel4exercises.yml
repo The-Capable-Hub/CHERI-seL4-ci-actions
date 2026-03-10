@@ -26,7 +26,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: RISCV64_CHERI
+          - arch: RISCV64
+            arch_ext: "RVY"
             compiler: llvm
             container-image: capablehub/cheri-sel4-ci-riscv-microkit:latest
     concurrency:
@@ -54,5 +55,6 @@ jobs:
     - uses: The-Capable-Hub/CHERI-seL4-ci-actions/cheri-sel4exercises@michaelcobb/capable-hub-ci
       with:
         ARCH: ${{ matrix.arch }}
+        ARCH_EXT: ${{ matrix.arch_ext }}
         COMPILER: ${{ matrix.compiler }}
 
