@@ -6,7 +6,7 @@ if [ -n "$DEBUG_ACTION" ]; then
 fi
 
 # Include common helper functions
-. ${GITHUB_ACTION_PATH}/../cheri-sel4microkittest/microkit_targets.sh
+. ${GITHUB_ACTION_PATH}/../cheri-sel4microkittest/common_microkit_targets.sh
 
 LLVM_PATH="$(readlink -f $(dirname $(which clang))/../)"
 
@@ -16,22 +16,6 @@ GEN_IMAGE=${SEL4_EXERCISES_DIR}/tools/gen_image
 CCC=${SEL4_EXERCISES_DIR}/tools/ccc
 
 INSTALL_DIR=${SEL4_EXERCISES_DIR}/install
-
-find_microkit_sdk() {
-    shopt -s nullglob
-    local dirs=( "${SEL4_MICROKIT_DIR}/release"/*/ )
-    shopt -u nullglob
-
-    if (( ${#dirs[@]} != 1 )); then
-        echo "Error: expected exactly 1 directory in ${SEL4_MICROKIT_DIR}, found ${#dirs[@]}" >&2
-        return 1
-    fi
-
-    local microkit_release="${dirs[0]%/}"
-    echo "Using Microkit release dir: ${microkit_release}"
-
-    export MICROKIT_SDK="${microkit_release}"
-}
 
 package_microkit_image() {
     local sys_file="$1"

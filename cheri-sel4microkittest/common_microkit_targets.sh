@@ -50,3 +50,18 @@ set_target_from_arch() {
             ;;
     esac
 }
+
+find_microkit_sdk_release() {
+    shopt -s nullglob
+    local dirs=( "${SEL4_MICROKIT_DIR}/release"/*/ )
+    shopt -u nullglob
+
+    if (( ${#dirs[@]} < 1 )); then
+        echo "Error: expected one or more directories in ${SEL4_MICROKIT_DIR}, found ${#dirs[@]}" >&2
+        return 1
+    fi
+
+    local microkit_release="${dirs[0]%/}"
+    echo "${microkit_release}"
+    return 0
+}

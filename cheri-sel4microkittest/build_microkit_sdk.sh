@@ -6,7 +6,7 @@ if [ -n "$DEBUG_ACTION" ]; then
 fi
 
 # Include common helper functions
-. ${GITHUB_ACTION_PATH}/../cheri-sel4microkittest/microkit_targets.sh
+. ${GITHUB_ACTION_PATH}/../cheri-sel4microkittest/common_microkit_targets.sh
 
 init() {
     cd ${SEL4_MICROKIT_DIR}
