@@ -1,0 +1,58 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'seL4/CHERIMicrokitTest'
+description: |
+  Runs CHERI seL4 Microkit Tests
+
+inputs:
+  ARCH:
+    description: 'Architecture to test. One of ARM, ARM_HYP, AARCH64, RISCV64, X64'
+    required: true
+
+  COMPILER:
+    description: 'Which compiler suite to use. One of gcc, llvm'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Build seL4 Microkit
+      env:
+        INPUT_ARCH: ${{ inputs.ARCH }}
+        INPUT_COMPILER: ${{ inputs.COMPILER }}
+        SEL4_KERNEL_DIR: "${{ github.workspace }}/repo"
+        SEL4_MICROKIT_DIR: "${{ github.workspace }}/microkit"
+      shell: bash
+      run: |
+        rustup default stable
+        rustup target add x86_64-unknown-linux-musl
+
+        # compile seL4 Microkit SDK
+        cd ${GITHUB_ACTION_PATH}
+        ./build_microkit_sdk.sh
+
+    - name: Build seL4 Microkit tests and examples
+      env:
+        INPUT_ARCH: ${{ inputs.ARCH }}
+        INPUT_COMPILER: ${{ inputs.COMPILER }}
+        SEL4_KERNEL_DIR: "${{ github.workspace }}/repo"
+        SEL4_MICROKIT_DIR: "${{ github.workspace }}/microkit"
+      shell: bash
+      run: |
+        # Build seL4 Microkit tests and examples
+        cd ${GITHUB_ACTION_PATH}
+        ./build_tests.sh
+
+    - name: Run seL4 Microkit tests and examples
+      env:
+        INPUT_ARCH: ${{ inputs.ARCH }}
+        INPUT_COMPILER: ${{ inputs.COMPILER }}
+        SEL4_KERNEL_DIR: "${{ github.workspace }}/repo"
+        SEL4_MICROKIT_DIR: "${{ github.workspace }}/microkit"
+      shell: bash
+      run: |
+        # Run seL4 exercises
+        cd ${GITHUB_ACTION_PATH}
+        ./run_tests.sh

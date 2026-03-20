@@ -1,0 +1,53 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+# cheri-sel4microkittest runs
+
+name: CHERI-sel4microkittest
+
+on:
+  workflow_call:
+    inputs:
+      runner:
+        type: string
+        required: false
+        default: trustworthysystems/sel4:latest
+      container-image:
+        type: string
+        required: false
+        default: ""
+
+jobs:
+  cheri-microkittest:
+    name: CHERI Microkit Tests
+    runs-on: ${{ inputs.runner }}
+    container: ${{ matrix.container-image || inputs.container-image }}
+    strategy:
+      matrix:
+        include:
+          - arch: RISCV64_CHERI
+            compiler: llvm
+            container-image: capablehub/cheri-sel4-ci-riscv-microkit:latest
+    concurrency:
+      group: ${{ github.workflow }}-cheri-sel4microkittest-pr-${{ github.event.number }}-${{ strategy.job-index }}
+      cancel-in-progress: true
+    steps:
+    - name: Act Workaround # https://github.com/nektos/act/issues/973
+      if: ${{ env.ACT }}
+      run: |
+        curl -fsSL https://deb.nodesource.com/setup_22.x | bash && apt install -y nodejs
+        mkdir ${HOME}/.ssh && curl --silent https://api.github.com/meta | jq --raw-output '"github.com "+.ssh_keys[]' >> ${HOME}/.ssh/known_hosts
+    - uses: actions/checkout@v5
+      with:
+        path: "repo"
+    - uses: actions/checkout@v5
+      with:
+        repository: "CHERI-Alliance/CHERI-Microkit"
+        ref: "cheri"
+        path: "microkit"
+    - uses: The-Capable-Hub/CHERI-seL4-ci-actions/cheri-sel4microkittest@michaelcobb/capable-hub-ci
+      with:
+        ARCH: ${{ matrix.arch }}
+        COMPILER: ${{ matrix.compiler }}
+
