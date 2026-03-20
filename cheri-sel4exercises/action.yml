@@ -27,12 +27,12 @@ runs:
         SEL4_EXERCISES_DIR: "${{ github.workspace }}/exercises"
       shell: bash
       run: |
+        # Build seL4 Microkit SDK
         rustup default stable
         rustup target add x86_64-unknown-linux-musl
 
-        # compile seL4 Microkit SDK
         cd ${GITHUB_ACTION_PATH}
-        ./build_microkit_sdk.sh
+        ../cheri-sel4microkittest/build_microkit_sdk.sh
 
     - name: Build CHERI seL4 Exercises
       env:

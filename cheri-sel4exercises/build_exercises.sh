@@ -6,7 +6,7 @@ if [ -n "$DEBUG_ACTION" ]; then
 fi
 
 # Include common helper functions
-. microkit_targets.sh
+. ${GITHUB_ACTION_PATH}/../cheri-sel4microkittest/microkit_targets.sh
 
 LLVM_PATH="$(readlink -f $(dirname $(which clang))/../)"
 
