@@ -29,12 +29,14 @@ set_target_from_arch() {
     case "${INPUT_ARCH}" in
         RISCV64)
             TARGET="riscv64"
+            MICROKIT_TARGET="riscv64"
             BOARD="qemu_virt_riscv64"
             TARGET_IS_PURECAP=false
             for ext in ${INPUT_ARCH_EXT-}; do
                 case "${ext}" in
                     RVY)
                         TARGET_IS_PURECAP=true
+                        MICROKIT_TARGET="riscv64-purecap"
                         ;;
                     *)
                         echo "RISCV64: Unknown ARCH_EXT '${ext}'"

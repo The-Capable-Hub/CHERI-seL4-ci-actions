@@ -20,8 +20,12 @@ RESULTS_FAIL=()
 find_qemu_for_target() {
     set +e
     case "${TARGET}" in
-        riscv64-purecap)
-            QEMU="qemu-system-riscv64cheri"
+        riscv64)
+            if [ "${TARGET_IS_PURECAP}" = true ]; then
+                QEMU="qemu-system-riscv64cheri"
+            else
+                QEMU="qemu-system-riscv64"
+            fi
             ;;
         *)
             echo "Error: ${TARGET}: Unsupported target" && exit 1
@@ -69,8 +73,12 @@ set_qemu_args_riscv64_purecap() {
 
 set_qemu_args_for_target() {
     case "${TARGET}" in
-        riscv64-purecap)
-            set_qemu_args_riscv64_purecap
+        riscv64)
+            if [ "${TARGET_IS_PURECAP}" = true ]; then
+                set_qemu_args_riscv64_purecap
+            else
+                echo "Error: ${TARGET}: TODO: implement `set_qemu_args_riscv64`" && exit 1
+            fi
             ;;
         *)
             echo "Error: ${TARGET}: Unsupported target" && exit 1
@@ -128,7 +136,7 @@ run_exercise() {
     local exercise="$1"
     local match="$2"
 
-    local img_name="${exercise}-cheri-sel4-microkit-${TARGET}-${BOARD}.img"
+    local img_name="${exercise}-cheri-sel4-microkit-${MICROKIT_TARGET}-${BOARD}.img"
     local full_img_name="${SEL4_EXERCISES_DIR}/install/${img_name}"
     local timeout="30s"
     local log_prefix="${QEMU_OUTPUT_DIR}/${exercise}"
@@ -198,7 +206,7 @@ run_mission() {
     local mission="$1"
     local match="$2"
 
-    local img_name="${mission}-cheri-sel4-microkit-${TARGET}-${BOARD}.img"
+    local img_name="${mission}-cheri-sel4-microkit-${MICROKIT_TARGET}-${BOARD}.img"
     local full_img_name="${SEL4_EXERCISES_DIR}/install/${img_name}"
     local timeout="30s"
     local log_prefix="${QEMU_OUTPUT_DIR}/${mission}"

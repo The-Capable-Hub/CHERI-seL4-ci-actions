@@ -48,17 +48,13 @@ build_single_elf() {
 
     local src_c=($all_src_c)
     local flags=""
-    local target="${TARGET}"
     if [ "${TARGET_IS_PURECAP}" = true ]; then
         flags="-cheri-bounds=subobject-safe ${flags}"
     fi
     if [ "${TARGET}" == "riscv64" ]; then
         flags="-G0 ${flags}"
-        if [ "${TARGET_IS_PURECAP}" = true ]; then
-            target="riscv64-purecap"
-        fi
     fi
-    ${CCC} ${target} ${flags} "${src_c[@]}" -o "${elf}"
+    ${CCC} ${MICROKIT_TARGET} ${flags} "${src_c[@]}" -o "${elf}"
 }
 
 build_mission() {
@@ -81,7 +77,7 @@ build_mission() {
         build_single_elf "${src_app_c} ${src_btpalloc_c}" "${elf_app}"
         build_single_elf "${src_serial_server}" "${elf_serial}"
 
-        local img_name="${mission}-cheri-sel4-microkit-${TARGET}-${BOARD}.img"
+        local img_name="${mission}-cheri-sel4-microkit-${MICROKIT_TARGET}-${BOARD}.img"
         package_microkit_image "${sys_file}" "${img_name}"
     elif [ "${mission}" == "uninitialized-stack-frame-control-flow" ]; then
         local src_app_c="${src_dir}/stack-mission.c"
@@ -89,7 +85,7 @@ build_mission() {
         build_single_elf "${src_app_c} ${src_btpalloc_c}" "${elf_app}"
         build_single_elf "${src_serial_server}" "${elf_serial}"
 
-        local img_name="${mission}-cheri-sel4-microkit-${TARGET}-${BOARD}.img"
+        local img_name="${mission}-cheri-sel4-microkit-${MICROKIT_TARGET}-${BOARD}.img"
         package_microkit_image "${sys_file}" "${img_name}"
     else
         echo "Error: Unknown mission: ${mission}"
@@ -111,7 +107,7 @@ build_exercise() {
 
     local elf="${INSTALL_DIR}/${exercise}.elf"
     build_single_elf "${src_c}" "${elf}"
-    local img_name="${exercise}-cheri-sel4-microkit-${TARGET}-${BOARD}.img"
+    local img_name="${exercise}-cheri-sel4-microkit-${MICROKIT_TARGET}-${BOARD}.img"
     package_microkit_image "${sys_file}" "${img_name}"
 
     echo "::endgroup"
@@ -124,13 +120,13 @@ build_exercise_compile_and_run() {
     echo "::group::Build exercise 'compile-and-run'"
 
     local elf="${INSTALL_DIR}/print-pointer.elf"
-    ${CCC} ${TARGET} ${src_dir}/print-pointer.c -o ${elf}
-    (cd ${INSTALL_DIR} && ${GEN_IMAGE} -a ${TARGET} -o "${INSTALL_DIR}/print-pointer-cheri-sel4-microkit-${TARGET}-${BOARD}.img" ${elf})
+    ${CCC} ${MICROKIT_TARGET} ${src_dir}/print-pointer.c -o ${elf}
+    (cd ${INSTALL_DIR} && ${GEN_IMAGE} -a ${MICROKIT_TARGET} -o "${INSTALL_DIR}/print-pointer-cheri-sel4-microkit-${MICROKIT_TARGET}-${BOARD}.img" ${elf})
 
     if [ "${TARGET_IS_PURECAP}" = true ]; then
         elf="${INSTALL_DIR}/print-capability.elf"
-        ${CCC} ${TARGET} ${src_dir}/print-capability.c -o ${elf}
-        (cd ${INSTALL_DIR} && ${GEN_IMAGE} -a ${TARGET} -o "${INSTALL_DIR}/print-capability-cheri-sel4-microkit-${TARGET}-${BOARD}.img" ${elf})
+        ${CCC} ${MICROKIT_TARGET} ${src_dir}/print-capability.c -o ${elf}
+        (cd ${INSTALL_DIR} && ${GEN_IMAGE} -a ${MICROKIT_TARGET} -o "${INSTALL_DIR}/print-capability-cheri-sel4-microkit-${MICROKIT_TARGET}-${BOARD}.img" ${elf})
     fi
 
     echo "::endgroup"
@@ -141,14 +137,21 @@ init() {
     mkdir -p ${INSTALL_DIR}
 
     set_target_from_arch
+
+    #set_microkit_compiler_flags
+
+    set +e
+    export MICROKIT_SDK="$(find_microkit_sdk_release)"
+    if [ $? -ne 0 ]; then
+        echo "Error: microkit SDK release not found!"
+        exit 1
+    fi
+    set -e
+
     echo "TARGET=${TARGET}"
     echo "BOARD=${BOARD}"
-
-    set_microkit_compiler_flags
     echo "TARGET_IS_PURECAP=${TARGET_IS_PURECAP}"
-
-    find_microkit_sdk || exit 1
-
+    echo "MICROKIT_TARGET=${MICROKIT_TARGET}"
     echo "SEL4_MICROKIT_DIR=${SEL4_MICROKIT_DIR}"
     echo "MICROKIT_SDK=${MICROKIT_SDK}"
 
