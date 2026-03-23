@@ -72,6 +72,8 @@ platforms:
     march: rv64imac_zcherihybrid
     no_hw_test: true
     no_hw_build: true
+    settings:
+      RISCV_EXT_Y: true
 
   RISCVVIRT32:
     arch: riscv
