@@ -11,7 +11,7 @@ set -e
 
 echo "::group::Setting up"
 export REPO_MANIFEST="master.xml"
-export MANIFEST_URL="https://github.com/seL4/sel4test-manifest.git"
+export MANIFEST_URL="https://github.com/The-Capable-Hub/CHERI-sel4test-manifest.git"
 checkout-manifest.sh
 
 fetch-branches.sh

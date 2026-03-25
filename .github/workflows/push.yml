@@ -11,6 +11,15 @@ on:
       - master
   pull_request:
   workflow_call:
+    inputs:
+      runner:
+        type: string
+        required: false
+        default: ubuntu-latest
+      container-image:
+        type: string
+        required: false
+        default: ""
     secrets:
       token:
         description: 'Optional token for private repositories'
@@ -19,7 +28,8 @@ on:
 jobs:
   check:
     name: License Check
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     steps:
     - uses: seL4/ci-actions/license-check@master
       with:
@@ -27,7 +37,8 @@ jobs:
 
   links:
     name: Links
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     steps:
       - name: Link checker cache
         uses: actions/cache@v4

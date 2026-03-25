@@ -10,12 +10,23 @@ on:
   schedule:
     - cron: '3 2 * * *'
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      runner:
+        type: string
+        required: false
+        default: ubuntu-24.04
+      container-image:
+        type: string
+        required: false
+        default: ""
 
 jobs:
   isabelle-mirror:
     name: 'Isabelle Mirror'
     if: ${{ github.repository_owner == 'seL4' }}
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner }}
+    container: ${{ inputs.container-image != '' && inputs.container-image || null }}
     env:
       ISA_MIRROR_TOKEN: ${{ secrets.ISA_MIRROR_TOKEN }}
     steps:

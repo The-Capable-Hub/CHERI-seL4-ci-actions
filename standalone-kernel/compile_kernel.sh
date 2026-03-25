@@ -7,11 +7,13 @@
 
 echo "Arch: $INPUT_ARCH"
 echo "Comp: $INPUT_COMPILER"
+echo "Arch Ext: ${INPUT_ARCH_EXT-}"
 
 set -eu
 
 gcc_cfg=""
 llvm_triple=""
+extra_arch_params=""
 case "${INPUT_ARCH}" in
     ARM|ARM_HYP)
         gcc_cfg="AARCH32"
@@ -29,6 +31,17 @@ case "${INPUT_ARCH}" in
     RISCV64)
         gcc_cfg="RISCV64"
         llvm_triple="riscv64-unknown-elf"
+        for ext in ${INPUT_ARCH_EXT-}; do
+            case "${ext}" in
+                RVY)
+                    extra_arch_params="-DKernelRiscvExtD=ON -DKernelRiscvExtY=ON"
+                    ;;
+                *)
+                    echo "RISCV64: Unknown ARCH_EXT '${ext}'"
+                    exit 1
+                    ;;
+            esac
+        done
         ;;
     IA32|X64)
         # just use the standard host compiler
@@ -87,6 +100,8 @@ do_compile_kernel()
                 ;;
         esac
     fi
+
+    extra_params="${extra_params} ${extra_arch_params}"
 
     # Unfortunately, CMake does not halt with a nice and clear error if the
     # config file does not exist. Instead, it logs an error that it could not
